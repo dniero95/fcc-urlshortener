@@ -27,7 +27,8 @@ app.get('/', function (req, res) {
 
 // shorturl POST endpoint
 app.post('/api/shorturl', function (req, res) {
-  let regex = /^https?:\/\/[a-z]+\.[a-z]{2,}\/?$/;
+  let regex = /^https?:\/\/(www\.)?[a-zA-Z]+\.[a-zA-Z]{2,}[\/\w-]*$/;
+
   let url = req.body.url.trim();
   console.log(typeof url);
   console.log("url: ", url);
