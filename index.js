@@ -27,10 +27,18 @@ app.get('/', function (req, res) {
 
 // shorturl POST endpoint
 app.post('/api/shorturl', function (req, res) {
-  let url = req.body.url;
-  let short_url = 1;
-  cache.set(short_url, url, 60 * 60 * 24);
-  res.json({ original_url: url, short_url: short_url });
+  let regex = /^https?:\/\/[a-z]+\.[a-z]{2,}\/?$/;
+  let url = req.body.url.trim();
+  console.log(typeof url);
+  console.log("url: ", url);
+  console.log("regex.test(url): ", regex.test(url));
+  if (regex.test(url)) {
+    let short_url = 1;
+    cache.set(short_url, url, 60 * 60 * 24);
+    res.json({ original_url: url, short_url: short_url });
+  } else {
+    res.json({ error: 'invalid url' });
+  }
 });
 
 app.get('/api/shorturl/:short_url', (req, res) => {
