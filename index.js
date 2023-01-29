@@ -34,20 +34,27 @@ app.post('/api/shorturl', function (req, res) {
   let url = req.body.url.trim();
 
   if (validUrl.isUri(url)) {
-    let short_url;
-    const keys = cache.keys();
-    if (!keys.length) {
-      short_url = 0
-      cache.set(short_url, url, 60 * 60 * 24);
-    } else {
-      let max = Math.max(...keys);
-      short_url = ++max;
-      cache.set(short_url, url, 60 * 60 * 24);
-    }
-    res.json({ original_url: url, short_url: short_url });
+    dns.lookup(new URL(url).hostname, (err, address) => {
+      if (err){
+        console.log(err);
+        res.json({ error: 'invalid url' });
+      }else{
+
+        let short_url;
+        const keys = cache.keys();
+        if (!keys.length) {
+          short_url = 0
+          cache.set(short_url, url, 60 * 60 * 24);
+        } else {
+          let max = Math.max(...keys);
+          short_url = max + 1;
+          cache.set(short_url, url, 60 * 60 * 24);
+        }
+        res.json({ original_url: url, short_url: short_url });
+      }
+    });
   } else {
     res.json({"error":"Invalid URL"});
-
   }
 
 });
