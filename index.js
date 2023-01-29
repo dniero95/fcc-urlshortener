@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const dns = require('dns');
 // add boy parser
 const bodyParser = require('body-parser');
 // add node-cache
