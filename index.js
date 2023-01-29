@@ -27,25 +27,25 @@ app.get('/', function (req, res) {
 
 // shorturl POST endpoint
 app.post('/api/shorturl', function (req, res) {
-  let regex = /^https?:\/\/(www\.)?[a-zA-Z]+\.[a-zA-Z]{2,}[\/\w-]*$/;
+  let regex = /^https?:\/\/(www\.)?[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,}[\/\w-]*$/;
 
   let url = req.body.url.trim();
-  let short_url;
-  const keys = cache.keys();
-  if (!keys.length) {
-    short_url = 0
-    cache.set(short_url, url, 60 * 60 * 24);
-  } else {
-    let max = Math.max(...keys);
-    short_url = ++max;
-    cache.set(short_url, url, 60 * 60 * 24);
-  }
-  res.json({ original_url: url, short_url: short_url });
-  // if (regex.test(url)) {
+  if (regex.test(url)) {
+    let short_url;
+    const keys = cache.keys();
+    if (!keys.length) {
+      short_url = 0
+      cache.set(short_url, url, 60 * 60 * 24);
+    } else {
+      let max = Math.max(...keys);
+      short_url = ++max;
+      cache.set(short_url, url, 60 * 60 * 24);
+    }
+    res.json({ original_url: url, short_url: short_url });
 
-  // } else {
-  //   res.json({ error: 'invalid url' });
-  // }
+  } else {
+    res.json({ error: 'invalid url' });
+  }
 });
 
 app.get('/api/shorturl/:short_url', (req, res) => {
