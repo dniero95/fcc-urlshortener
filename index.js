@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const dns = require('dns');
-// add boy parser
+// validete the url
+const validUrl = require('valid-url');
+// add body parser
 const bodyParser = require('body-parser');
 // add node-cache
 const NodeCache = require("node-cache");
@@ -28,10 +30,10 @@ app.get('/', function (req, res) {
 
 // shorturl POST endpoint
 app.post('/api/shorturl', function (req, res) {
-  let regex = /^https?:\/\/(www\.)?[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,}[\/\w-]*$/;
 
   let url = req.body.url.trim();
-  if (regex.test(url)) {
+
+  if (validUrl.isUri(url)) {
     let short_url;
     const keys = cache.keys();
     if (!keys.length) {
@@ -43,12 +45,15 @@ app.post('/api/shorturl', function (req, res) {
       cache.set(short_url, url, 60 * 60 * 24);
     }
     res.json({ original_url: url, short_url: short_url });
-
   } else {
     res.json({ error: 'invalid url' });
+
   }
+
 });
 
+
+// shorturl GET get endpoint
 app.get('/api/shorturl/:short_url', (req, res) => {
   short_url = req.params.short_url;
   let original_url = cache.get(short_url);
