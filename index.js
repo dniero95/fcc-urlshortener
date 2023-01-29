@@ -30,9 +30,6 @@ app.post('/api/shorturl', function (req, res) {
   let regex = /^https?:\/\/(www\.)?[a-zA-Z]+\.[a-zA-Z]{2,}[\/\w-]*$/;
 
   let url = req.body.url.trim();
-  console.log(typeof url);
-  console.log("url: ", url);
-  console.log("regex.test(url): ", regex.test(url));
   if (regex.test(url)) {
     let short_url = 1;
     cache.set(short_url, url, 60 * 60 * 24);
